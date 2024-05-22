@@ -6,23 +6,18 @@ import {
   ref,
   uploadBytesResumable,
 } from "firebase/storage";
+import { useSession } from "next-auth/react";
 import Image from "next/image";
-import { useEffect, useState } from "react";
-import toast, { Toaster } from "react-hot-toast";
+import { useEffect } from "react";
+// import toast, { Toaster } from "react-hot-toast";
 
-export default function EditableImage({ image, setImage }) {
-  const [file, setFile] = useState(undefined);
-  const [fileUploadError, setFileUploadError] = useState(false);
-  const [formData, setFormData] = useState({});
-  const [filePerc, setFilePerc] = useState(0);
-
+export default function EditableImage({ link, setLink }) {
+  const session = useSession();
   useEffect(() => {
-    if (file) {
-      handleFileChange(file);
-    }
-  }, [file]);
-
-  const handleFileChange = (file) => {
+    setLink(session?.data?.user?.image);
+  }, [session]);
+  async function handleFileChange(ev) {
+    const file = ev.target.files[0];
     const storage = getStorage(app);
     const fileName = new Date().getTime() + file.name;
     const storageRef = ref(storage, fileName);
@@ -33,45 +28,44 @@ export default function EditableImage({ image, setImage }) {
       (snapshot) => {
         const progress =
           (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        setFilePerc(Math.round(progress));
+        console.log(`Upload is ${progress}% done`);
       },
       (error) => {
-        setFileUploadError(true);
-        console.log(error);
+        console.error("Upload failed:", error);
       },
-      () => {
-        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) =>
-          setFormData({ ...formData, avatar: downloadURL })
-        );
+      async () => {
+        const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+        console.log("File available at", downloadURL);
+        setLink(downloadURL);
       }
     );
-    toast.success("Image uploaded successfully");
-  };
+    // await toast.promise(uploadPromise, {
+    //   loading: "Uploading...",
+    //   success: "Uploaded successfully",
+    //   error: "Error",
+    // });
+  }
 
   return (
     <>
-      <Toaster position="top-center" reverseOrder={false} />
-      {file && (
+      {/* <Toaster position="top-center" reverseOrder={false} /> */}
+      {link && (
         <Image
           className="rounded-lg w-full h-full mb-1"
-          src={formData.avatar}
+          src={link}
           width={250}
           height={250}
-          alt="'avatar"
+          alt="avatar"
         ></Image>
       )}
-      {!file && (
+      {!link && (
         <div className="text-center bg-gray-200 p-4 text-gray-500 rounded-lg mb-1">
           No image
         </div>
       )}
 
       <label>
-        <input
-          type="file"
-          className="hidden"
-          onChange={(e) => setFile(e.target.files[0])}
-        />
+        <input type="file" className="hidden" onChange={handleFileChange} />
         <span className="block cursor-pointer border border-gray-300 rounded-lg p-2 text-center">
           Edit
         </span>

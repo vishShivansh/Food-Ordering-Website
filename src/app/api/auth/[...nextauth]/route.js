@@ -1,6 +1,6 @@
 import { User } from "@/app/models/User";
-// import clientPromise from "@/lib/mongoConnect";
-// import { MongoDBAdapter } from "@auth/mongodb-adapter";
+import clientPromise from "@/lib/mongoConnect";
+import { MongoDBAdapter } from "@auth/mongodb-adapter";
 import bcrypt from "bcrypt";
 import * as mongoose from "mongoose";
 import NextAuth from "next-auth";
@@ -41,7 +41,7 @@ export const authOptions = {
     }),
   ],
 
-  // adapter: MongoDBAdapter(clientPromise),
+  adapter: MongoDBAdapter(clientPromise),
 };
 
 const handler = NextAuth(authOptions);

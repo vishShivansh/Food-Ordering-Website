@@ -7,7 +7,6 @@ import { CartContext } from "../AppContext";
 
 export default function Header() {
   const session = useSession();
-  console.log(session);
   const status = session?.status;
   const userData = session.data?.user;
   const { cartProducts } = useContext(CartContext);

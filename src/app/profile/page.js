@@ -11,6 +11,7 @@ import toast, { Toaster } from "react-hot-toast";
 
 export default function ProfilePage() {
   const session = useSession();
+  console.log(session);
   const [user, setUser] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [profileFetched, setProfileFetched] = useState(false);
