@@ -4,7 +4,7 @@ import MenuItemPriceProps from "@/Components/layout/MenuItemPriceProps";
 import { useEffect, useState } from "react";
 
 export default function MenuItemForm({ onSubmit, menuItem }) {
-  const [image, setImage] = useState(menuItem?.image || "");
+  const [link, setLink] = useState(menuItem?.image || "");
   const [name, setName] = useState(menuItem?.name || "");
   const [description, setDescription] = useState(menuItem?.description || "");
   const [basePrice, setBasePrice] = useState(menuItem?.basePrice || "");
@@ -28,7 +28,7 @@ export default function MenuItemForm({ onSubmit, menuItem }) {
       onSubmit={(ev) =>
         onSubmit(ev, {
           name,
-          image,
+          link,
           description,
           category,
           basePrice,
@@ -43,7 +43,7 @@ export default function MenuItemForm({ onSubmit, menuItem }) {
         style={{ gridTemplateColumns: ".3fr .7fr" }}
       >
         <div className="">
-          <EditableImage image={image} setImage={setImage} />
+          <EditableImage link={link} setLink={setLink} />
         </div>
         <div className="grow">
           <label>Item name</label>
@@ -67,7 +67,9 @@ export default function MenuItemForm({ onSubmit, menuItem }) {
             {categories?.length > 0 &&
               categories.map((c) => (
                 // eslint-disable-next-line react/jsx-key
-                <option value={c._id}>{c.name}</option>
+                <option key={c._id} value={c._id}>
+                  {c.name}
+                </option>
               ))}
           </select>
 

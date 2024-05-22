@@ -15,7 +15,7 @@ export default function AddressInputs({ addressProps, setAddressProps }) {
         type="text"
         placeholder="Street address"
         value={streetAddress}
-        onChange={(ev) => setAddressProps("streetAddres", ev.target.value)}
+        onChange={(ev) => setAddressProps("streetAddress", ev.target.value)}
       />
       <div className="grid grid-cols-2 gap-2">
         <div>

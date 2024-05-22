@@ -1,9 +1,10 @@
 import { User } from "@/app/models/User";
+import { UserInfo } from "@/app/models/UserInfo";
 import clientPromise from "@/lib/mongoConnect";
 import { MongoDBAdapter } from "@auth/mongodb-adapter";
 import bcrypt from "bcrypt";
 import * as mongoose from "mongoose";
-import NextAuth from "next-auth";
+import NextAuth, { getServerSession } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 
@@ -43,6 +44,19 @@ export const authOptions = {
 
   adapter: MongoDBAdapter(clientPromise),
 };
+
+export async function isAdmin() {
+  const session = await getServerSession(authOptions);
+  const userEmail = session?.user?.email;
+  if (!userEmail) {
+    return false;
+  }
+  const userInfo = await UserInfo.findOne({ email: userEmail });
+  if (!userInfo) {
+    return false;
+  }
+  return userInfo.admin;
+}
 
 const handler = NextAuth(authOptions);
 

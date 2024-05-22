@@ -28,22 +28,35 @@ export default function EditMenuItemPage() {
     ev.preventDefault();
     data = { ...data, _id: id };
     const savingPromise = new Promise(async (resolve, reject) => {
-      const response = await fetch("/api/menu-items", {
-        method: "PUT",
-        body: JSON.stringify(data),
-        headers: { "Content-Type": "application/json" },
-      });
-      if (response.ok) resolve();
-      else reject();
-    });
-    await toast.promise(savingPromise, {
-      loading: "Saving this tasty item...",
-      success: "Saved",
-      error: "Error",
-    });
-    setRedirectToItems(true);
-  }
+      try {
+        const response = await fetch("/api/menu-items", {
+          method: "PUT",
+          body: JSON.stringify(data),
+          headers: { "Content-Type": "application/json" },
+        });
 
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || "Error updating menu item");
+        }
+
+        await toast.promise(resolve(), {
+          loading: "Saving this tasty item...",
+          success: "Saved",
+          error: "Error",
+        });
+
+        setRedirectToItems(true);
+      } catch (error) {
+        console.error("Error during form submission:", error);
+        await toast.promise(reject(), {
+          loading: "Saving this tasty item...",
+          success: "Saved",
+          error: error.message || "Error",
+        });
+      }
+    });
+  }
   async function handleDeleteClick() {
     const promise = new Promise(async (resolve, reject) => {
       const response = await fetch("/api/menu-items?_id=" + id, {
