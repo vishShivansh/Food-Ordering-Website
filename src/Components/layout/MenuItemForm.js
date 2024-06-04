@@ -4,7 +4,7 @@ import MenuItemPriceProps from "@/Components/layout/MenuItemPriceProps";
 import { useEffect, useState } from "react";
 
 export default function MenuItemForm({ onSubmit, menuItem }) {
-  const [link, setLink] = useState(menuItem?.image || "");
+  const [link, setLink] = useState(menuItem?.link || "");
   const [name, setName] = useState(menuItem?.name || "");
   const [description, setDescription] = useState(menuItem?.description || "");
   const [basePrice, setBasePrice] = useState(menuItem?.basePrice || "");
@@ -14,6 +14,7 @@ export default function MenuItemForm({ onSubmit, menuItem }) {
   );
   const [categories, setCategories] = useState([]);
   const [category, setCategory] = useState(menuItem?.category || "");
+  console.log(menuItem.link);
 
   useEffect(() => {
     fetch("/api/categories").then((res) => {

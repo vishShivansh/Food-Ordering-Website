@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { app } from "@/firebase";
 import {
@@ -13,9 +14,11 @@ import { useEffect } from "react";
 
 export default function EditableImage({ link, setLink }) {
   const session = useSession();
-  useEffect(() => {
-    setLink(session?.data?.user?.image);
-  }, [session]);
+  if (!link) {
+    useEffect(() => {
+      setLink(session?.data?.user?.image);
+    }, [session]);
+  }
   async function handleFileChange(ev) {
     const file = ev.target.files[0];
     const storage = getStorage(app);

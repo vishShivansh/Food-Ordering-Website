@@ -28,34 +28,23 @@ export default function EditMenuItemPage() {
     ev.preventDefault();
     data = { ...data, _id: id };
     const savingPromise = new Promise(async (resolve, reject) => {
-      try {
-        const response = await fetch("/api/menu-items", {
-          method: "PUT",
-          body: JSON.stringify(data),
-          headers: { "Content-Type": "application/json" },
-        });
+      const response = await fetch("/api/menu-items", {
+        method: "PUT",
+        body: JSON.stringify(data),
+        headers: { "Content-Type": "application/json" },
+      });
 
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.message || "Error updating menu item");
-        }
-
-        await toast.promise(resolve(), {
-          loading: "Saving this tasty item...",
-          success: "Saved",
-          error: "Error",
-        });
-
-        setRedirectToItems(true);
-      } catch (error) {
-        console.error("Error during form submission:", error);
-        await toast.promise(reject(), {
-          loading: "Saving this tasty item...",
-          success: "Saved",
-          error: error.message || "Error",
-        });
-      }
+      if (response.ok) resolve();
+      else reject();
     });
+
+    await toast.promise(savingPromise, {
+      loading: "Saving this tasty item...",
+      success: "Saved",
+      error: "Error",
+    });
+
+    setRedirectToItems(true);
   }
   async function handleDeleteClick() {
     const promise = new Promise(async (resolve, reject) => {
@@ -87,7 +76,7 @@ export default function EditMenuItemPage() {
   return (
     <section className="mt-8">
       <Toaster position="top-center" reverseOrder={false} />
-      {<UserTabs isAdmin={true} />}
+      <UserTabs isAdmin={true} />
       <div className="max-w-2xl mx-auto mt-8">
         <Link href={"/menu-items"} className="button">
           <Left />

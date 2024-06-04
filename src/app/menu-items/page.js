@@ -3,6 +3,7 @@
 import { useProfile } from "@/Components/UseProfile";
 import Right from "@/Components/icons/Right";
 import UserTabs from "@/Components/layout/UserTabs";
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -51,18 +52,12 @@ export default function MenuItemsPage() {
                     className=" bg-gray-200 rounded-lg p-4"
                   >
                     <div className="relative">
-                      {/* <Image
-                        src={item.image}
+                      <Image
+                        src={item.link}
                         alt="PizzaImage"
                         width={200}
                         height={200}
                         className="rounded-md"
-                      /> */}
-                      <img
-                        src="./pizza2.jpeg"
-                        alt=""
-                        width={200}
-                        height={200}
                       />
                     </div>
                     <div className="text-center">{item.name}</div>
