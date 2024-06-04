@@ -9,16 +9,15 @@ import {
 } from "firebase/storage";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
-import { useEffect } from "react";
 // import toast, { Toaster } from "react-hot-toast";
 
 export default function EditableImage({ link, setLink }) {
   const session = useSession();
-  if (!link) {
-    useEffect(() => {
-      setLink(session?.data?.user?.image);
-    }, [session]);
-  }
+  // if (!link) {
+  //   useEffect(() => {
+  //     setLink(session?.data?.user?.image);
+  //   }, [session]);
+  // }
   async function handleFileChange(ev) {
     const file = ev.target.files[0];
     const storage = getStorage(app);
