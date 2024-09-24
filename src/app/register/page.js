@@ -10,23 +10,29 @@ export default function RegisterPage() {
   const [password, setPassword] = useState("");
   const [userCreated, setUserCreated] = useState(false);
   const [creatingUser, setCreatingUser] = useState(false);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState("");
+
   async function handleFormSubmit(ev) {
     ev.preventDefault();
     setCreatingUser(true);
-    setError(false);
+    setError("");
     setUserCreated(false);
+
     const response = await fetch("/api/register", {
       method: "POST",
       body: JSON.stringify({ email, password }),
       headers: { "Content-Type": "application/json" },
     });
+
     if (response.ok) {
       setUserCreated(true);
       setEmail("");
       setPassword("");
     } else {
-      setError(true);
+      const errorMessage = await response.text();
+      setError(
+        errorMessage || "An error has occurred. Please try again later."
+      );
       setEmail("");
       setPassword("");
     }
@@ -46,8 +52,12 @@ export default function RegisterPage() {
         </div>
       )}
       {error && (
-        <div className="my-4 text-center">
-          An error has occurred. <br /> Please try again later.
+        <div
+          className="my-4 text-center text-red-500"
+          role="alert"
+          aria-live="assertive"
+        >
+          {error}
         </div>
       )}
       <form className="block max-w-xs mx-auto" onSubmit={handleFormSubmit}>
@@ -57,6 +67,7 @@ export default function RegisterPage() {
           value={email}
           onChange={(ev) => setEmail(ev.target.value)}
           disabled={creatingUser}
+          required
         />
         <input
           type="password"
@@ -64,9 +75,10 @@ export default function RegisterPage() {
           value={password}
           onChange={(ev) => setPassword(ev.target.value)}
           disabled={creatingUser}
+          required
         />
         <button type="submit" disabled={creatingUser}>
-          Register
+          {creatingUser ? "Creating..." : "Register"}
         </button>
         <div className="my-4 text-center text-gray-500">
           Or Login with provider
@@ -77,7 +89,7 @@ export default function RegisterPage() {
           className="flex gap-4 justify-center"
           onClick={() => signIn("google")}
         >
-          <Image src={googleImg} width={24} height={24} alt={""}></Image>
+          <Image src={googleImg} width={24} height={24} alt="Google Logo" />
           Login with Google
         </button>
         <div className="text-center my-4 text-gray-500 border-t pt-4">

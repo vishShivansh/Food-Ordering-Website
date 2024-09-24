@@ -8,7 +8,7 @@ const UserInfoSchema = new Schema(
     city: { type: String },
     postalCode: { type: String },
     country: { type: String },
-    admin: { type: Boolean, default: false },
+    admin: { type: Boolean, default: true },
   },
   { timestamps: true }
 );

@@ -14,7 +14,6 @@ export default function MenuItemForm({ onSubmit, menuItem }) {
   );
   const [categories, setCategories] = useState([]);
   const [category, setCategory] = useState(menuItem?.category || "");
-  console.log(menuItem.link);
 
   useEffect(() => {
     fetch("/api/categories").then((res) => {
