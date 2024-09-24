@@ -1,7 +1,5 @@
 import { User } from "@/app/models/User";
 import { UserInfo } from "@/app/models/UserInfo";
-import clientPromise from "@/lib/mongoConnect";
-import { MongoDBAdapter } from "@auth/mongodb-adapter";
 import bcrypt from "bcrypt";
 import * as mongoose from "mongoose";
 import NextAuth, { getServerSession } from "next-auth";
@@ -30,10 +28,9 @@ export const authOptions = {
         const user = await User.findOne({ email });
         const passwordOk = user && bcrypt.compareSync(password, user.password);
         if (passwordOk) {
-          return Promise.resolve(user);
-        } else {
-          return Promise.resolve(null);
+          return user;
         }
+        return null;
       },
     }),
     GoogleProvider({
@@ -41,8 +38,35 @@ export const authOptions = {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     }),
   ],
-
-  adapter: MongoDBAdapter(clientPromise),
+  callbacks: {
+    async signIn({ user, account, profile }) {
+      if (account.provider === "google") {
+        mongoose.connect(process.env.MONGO_URL);
+        const existingUser = await User.findOne({ email: profile.email });
+        if (!existingUser) {
+          await User.create({
+            name: profile.name,
+            email: profile.email,
+            image: profile.picture,
+            // other fields if any
+          });
+        }
+      }
+      return true;
+    },
+    async session({ session, token }) {
+      if (token) {
+        session.user._id = token.id;
+      }
+      return session;
+    },
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+      }
+      return token;
+    },
+  },
 };
 
 export async function isAdmin() {

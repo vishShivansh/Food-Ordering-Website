@@ -13,7 +13,7 @@ export async function POST(req) {
 
   const notHashedPassword = pass;
   const salt = bcrypt.genSaltSync(10);
-  body.password = bcrypt.hashSync(pass, salt);
+  body.password = bcrypt.hashSync(notHashedPassword, salt);
 
   const createdUser = await User.create(body);
   return Response.json(createdUser);
